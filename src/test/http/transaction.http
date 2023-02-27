@@ -1,0 +1,9 @@
+### use balance
+POST http://localhost:8088/transaction/use
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "accountNumber": "1000000000",
+  "amount" :1230
+}
