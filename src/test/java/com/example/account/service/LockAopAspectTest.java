@@ -29,8 +29,10 @@ class LockAopAspectTest {
     @Test
     void lockAndUnlock() throws Throwable {
         //given
-        ArgumentCaptor<String> lockArgumentCaptor = ArgumentCaptor.forClass((String.class));
-        ArgumentCaptor<String> unLockArgumentCaptor = ArgumentCaptor.forClass((String.class));
+        ArgumentCaptor<String> lockArgumentCaptor =
+                ArgumentCaptor.forClass((String.class));
+        ArgumentCaptor<String> unLockArgumentCaptor =
+                ArgumentCaptor.forClass((String.class));
         UseBalance.Request request =
                 new UseBalance.Request(123L, "1234", 1000L);
 
@@ -39,10 +41,12 @@ class LockAopAspectTest {
         lockAopAspect.aroundMethod(proceedingJoinPoint, request);
 
         //then
-        verify(lockService, times(1)).lock(lockArgumentCaptor.capture());
-        verify(lockService, times(1)).unlock(unLockArgumentCaptor.capture());
-        assertEquals(1234, lockArgumentCaptor.getValue());
-        assertEquals(1234, unLockArgumentCaptor.getValue());
+        verify(lockService, times(1))
+                .lock(lockArgumentCaptor.capture());
+        verify(lockService, times(1))
+                .unlock(unLockArgumentCaptor.capture());
+        assertEquals("1234", lockArgumentCaptor.getValue());
+        assertEquals("1234", unLockArgumentCaptor.getValue());
 
 
     }
@@ -50,20 +54,26 @@ class LockAopAspectTest {
     @Test
     void lockAndUnlock_evenIfThrow() throws Throwable {
         //given
-        ArgumentCaptor<String> lockArgumentCaptor = ArgumentCaptor.forClass((String.class));
-        ArgumentCaptor<String> unLockArgumentCaptor = ArgumentCaptor.forClass((String.class));
-        UseBalance.Request request = new UseBalance.Request(123L, "54321", 1000L);
-        given(proceedingJoinPoint.proceed()).willReturn(new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+        ArgumentCaptor<String> lockArgumentCaptor =
+                ArgumentCaptor.forClass((String.class));
+        ArgumentCaptor<String> unLockArgumentCaptor =
+                ArgumentCaptor.forClass((String.class));
+        UseBalance.Request request =
+                new UseBalance.Request(123L, "54321", 1000L);
+        given(proceedingJoinPoint.proceed())
+                .willReturn(new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         //when
-        assertThrows(AccountException.class, ()-> lockAopAspect.aroundMethod(proceedingJoinPoint, request));
-        lockAopAspect.aroundMethod(proceedingJoinPoint, request);
+        assertThrows(AccountException.class, ()->
+                lockAopAspect.aroundMethod(proceedingJoinPoint, request));
 
         //then
-        verify(lockService, times(1)).lock(lockArgumentCaptor.capture());
-        verify(lockService, times(1)).lock(unLockArgumentCaptor.capture());
-        assertEquals(54321, lockArgumentCaptor.getValue());
-        assertEquals(54321, unLockArgumentCaptor.getValue());
+        verify(lockService, times(1))
+                .lock(lockArgumentCaptor.capture());
+        verify(lockService, times(1))
+                .unlock(unLockArgumentCaptor.capture());
+        assertEquals("54321", lockArgumentCaptor.getValue());
+        assertEquals("54321", unLockArgumentCaptor.getValue());
 
 
     }

@@ -36,7 +36,8 @@ public class AccountService {
      */
     @Transactional
     public AccountDto createAccount(Long userId, Long initialBalance) {
-        AccountUser accountUser = accoutUserRepository.findById(userId).orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+        AccountUser accountUser = accoutUserRepository.findById(userId)
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
         validateCreateAccount(accountUser);
 
         String newAccountNumber = accountRepository.findFirstByOrderByIdDesc()
@@ -70,8 +71,7 @@ public class AccountService {
 
     @Transactional
     public AccountDto deleteAccount(Long userId, String accountNumber) {
-        AccountUser accountUser = accoutUserRepository.findById(userId)
-                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+        AccountUser accountUser = getAccountUser(userId);
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountException(ACCOUNT_NOT_FOUND));
         validateDeleteAccount(accountUser, account);
@@ -82,6 +82,11 @@ public class AccountService {
         accountRepository.save(account);
 
         return AccountDto.fromEntity(account);
+    }
+
+    private AccountUser getAccountUser(Long userId) {
+        return accoutUserRepository.findById(userId)
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
     }
 
     private void validateDeleteAccount(AccountUser accountUser, Account account) {
@@ -98,7 +103,7 @@ public class AccountService {
 
     @Transactional
     public List<AccountDto> getAccountsByUserId(Long userId){
-        AccountUser accountUser = accoutUserRepository.findById(userId).orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+        AccountUser accountUser = getAccountUser(userId);
 
         List<Account> accounts = accountRepository.findByAccountUser(accountUser);
         return accounts.stream().map(AccountDto::fromEntity).collect(Collectors.toList());

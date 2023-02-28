@@ -45,7 +45,7 @@ class LockServiceTest {
         given(redissonClient.getLock(anyString()))
                 .willReturn(rLock);
         given(rLock.tryLock(anyLong(), anyLong(), any()))
-                .willReturn(true);
+                .willReturn(false);
     //when
         AccountException exception = assertThrows(AccountException.class, ()-> lockService.lock("123"));
 

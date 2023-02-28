@@ -23,11 +23,10 @@ public class LockAopAspect {
         //lock 취득시도
         lockService.lock(request.getAccountNumber());
         try {
-            // before
             return pjp.proceed();
         }finally {
             // lock해제
-            lockService.lock(request.getAccountNumber());
+            lockService.unlock(request.getAccountNumber());
 
         }
     }
