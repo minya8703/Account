@@ -8,19 +8,19 @@ import lombok.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
-public class UseBalance {
+public class CancelBalance {
     @Getter
     @Setter
     @AllArgsConstructor
     public static class Request implements AccountLockIdInterface {
-        @NotNull
-        @Min(1)
-        private Long userId;
-
         @NotBlank
-        @Size(min =10, max = 10)
-        private String accountNumber;
+        private String transactionId;
 
+
+        @NotNull
+        @Size(min=10, max=10)
+        private String accountNumber;
+        
         @NotNull
         @Min(10)
         @Max(1000_000_000)

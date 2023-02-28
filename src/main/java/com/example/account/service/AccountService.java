@@ -39,12 +39,15 @@ public class AccountService {
         AccountUser accountUser = accoutUserRepository.findById(userId).orElseThrow(() -> new AccountException(USER_NOT_FOUND));
         validateCreateAccount(accountUser);
 
-        String newAccountnumber = accountRepository.findFirstByOrderByIdDesc().map(account -> (Integer.parseInt(account.getAccountNumber())) + 1 + "").orElse("1000000000");
+        String newAccountNumber = accountRepository.findFirstByOrderByIdDesc()
+                .map(account -> (Integer.parseInt(account.getAccountNumber())) + 1 + "")
+                .orElse("1000000000");
         return AccountDto.fromEntity(
-                accountRepository.save( Account.builder()
-                        .accountUser((accountUser))
+                accountRepository.save(
+                        Account.builder()
+                        .accountUser(accountUser)
                         .accountStatus(IN_USE)
-                        .accountNumber(newAccountnumber)
+                        .accountNumber(newAccountNumber)
                         .balance(initialBalance)
                         .registeredAt(LocalDateTime.now())
                         .build()));
@@ -67,8 +70,10 @@ public class AccountService {
 
     @Transactional
     public AccountDto deleteAccount(Long userId, String accountNumber) {
-        AccountUser accountUser = accoutUserRepository.findById(userId).orElseThrow(() -> new AccountException(USER_NOT_FOUND));
-        Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new AccountException(ACCOUNT_NOT_FOUND));
+        AccountUser accountUser = accoutUserRepository.findById(userId)
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountException(ACCOUNT_NOT_FOUND));
         validateDeleteAccount(accountUser, account);
 
         account.setAccountStatus(AccountStatus.UNREGISTERED);
